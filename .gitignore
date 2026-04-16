@@ -1,0 +1,18 @@
+# Secrets and credentials
+.env
+.mcp.json
+**/service-account-key.json
+
+# Temporary files
+.tmp/
+
+# Claude Code local config
+.claude/*
+!.claude/agents/
+
+# OS files
+.DS_Store
+
+# Python cache
+__pycache__/
+*.pyc
