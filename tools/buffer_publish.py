@@ -311,17 +311,16 @@ def cmd_delete(post_id):
     data = graphql("""
         mutation($input: DeletePostInput!) {
             deletePost(input: $input) {
-                ... on PostActionSuccess { post { id } }
-                ... on NotFoundError { message }
-                ... on UnauthorizedError { message }
-                ... on UnexpectedError { message }
+                __typename
+                ... on DeletePostSuccess { id }
+                ... on VoidMutationError { message }
             }
         }
     """, {"input": {"id": post_id}})
 
     result = data.get("deletePost", {})
-    if "message" in result and "post" not in result:
-        print(f"Error: {result['message']}", file=sys.stderr)
+    if result.get("__typename") == "VoidMutationError":
+        print(f"Error: {result.get('message', 'unknown')}", file=sys.stderr)
         sys.exit(1)
 
     print(f"Post {post_id} deleted.")
@@ -376,10 +375,9 @@ def cmd_promote(post_id):
     del_data = graphql("""
         mutation($input: DeletePostInput!) {
             deletePost(input: $input) {
-                ... on PostActionSuccess { post { id } }
-                ... on NotFoundError { message }
-                ... on UnauthorizedError { message }
-                ... on UnexpectedError { message }
+                __typename
+                ... on DeletePostSuccess { id }
+                ... on VoidMutationError { message }
             }
         }
     """, {"input": {"id": post_id}})
